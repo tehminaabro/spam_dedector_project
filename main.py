@@ -94,15 +94,16 @@ def home():
     """
 
 
-@app.post("/predict")
+    
+    @app.post("/predict")
 def predict_email(data: EmailInput):
     vectorized_data = tfidf_vectorizer.transform([data.email_text])
     
-    # GHALTI KI WALAJ HATAIN: [0] lagakar array se number nikalen
+    # Array se number nikalen
     prediction = svm_model.predict(vectorized_data)[0]
     
-    # int() lagayein taake 100% sahi match ho
-    result = "Spam" if int(prediction) == 0 else "Ham (Safe)"
+    # 🚨 FIX: Kyunki aapke model mein 1 ka matlab Ham hai, isliye isko badal diya:
+    result = "Ham (Safe)" if int(prediction) == 1 else "Spam"
     
     return {
         "email_received": data.email_text,
