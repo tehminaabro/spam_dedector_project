@@ -17,9 +17,11 @@ async def lifespan(app: FastAPI):
     vectorizer_path = r"C:\Users\AA.Y TRADEERS\Desktop\spam_dedector_project\tfidf_vectorizer.joblib"
     
     # Ab files bina kisi error ke load hongi
-    svm_model = joblib.load(model_path) 
-    tfidf_vectorizer = joblib.load(vectorizer_path) 
+    
+    svm_model = joblib.load("spam_model_svm.joblib") 
+    tfidf_vectorizer = joblib.load("tfidf_vectorizer.joblib") 
     yield
+
 
 app = FastAPI(lifespan=lifespan)
 
