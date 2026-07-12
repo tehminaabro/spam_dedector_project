@@ -2,7 +2,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from pydantic import BaseModel
 from fastapi.responses import HTMLResponse
-from fastapi.middleware.cors import CORSMiddleware  # <-- 1. CORS Middleware import kiya
+from fastapi.middleware.cors import CORSMiddleware
 import joblib
 
 svm_model = None
@@ -11,18 +11,19 @@ tfidf_vectorizer = None
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     global svm_model, tfidf_vectorizer
+    # Files load ho rahi hain
     svm_model = joblib.load("spam_model_svm.joblib") 
     tfidf_vectorizer = joblib.load("tfidf_vectorizer.joblib") 
     yield
 
 app = FastAPI(lifespan=lifespan)
 
-# <-- 2. CORS Settings add keen taake Hugging Face aapki API use kar sake
+# CORS Middleware taake harr jagah se API access ho sake
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Is se saari websites (including Hugging Face) allow ho jayengi
+    allow_origins=["*"],
     allow_credentials=True,
-    allow_methods=["*"],  # Saare methods (GET, POST) allow hain
+    allow_methods=["*"],
     allow_headers=["*"],
 )
 
@@ -69,7 +70,8 @@ def home():
                 resultDiv.style.color = "#555";
 
                 try {
-                    const response = await fetch('https://onrender.com', {
+                    // Ye dynamic origin khud hi Render ya Hugging face ka link utha lega
+                    const response = await fetch(window.location.origin + '/predict', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ email_text: text })
@@ -84,7 +86,7 @@ def home():
                         resultDiv.style.color = "#2e7d32";
                     }
                 } catch (error) {
-                    resultDiv.innerText = "❌ Error connecting to Render server.";
+                    resultDiv.innerText = "❌ Error connecting to server.";
                     resultDiv.style.color = "#d32f2f";
                 }
             }
@@ -93,18 +95,24 @@ def home():
     </html>
     """
 
-
-    
-    @app.post("/predict")
+@app.post("/predict")
 def predict_email(data: EmailInput):
+    if not data.email_text.strip():
+        return {"email_received": data.email_text, "prediction": "Ham (Safe)"}
+
+    # Vectorize text
     vectorized_data = tfidf_vectorizer.transform([data.email_text])
     
-    # Array se number nikalen
-    prediction = svm_model.predict(vectorized_data)[0]
-    
-    # 🚨 FIX: Kyunki aapke model mein 1 ka matlab Ham hai, isliye isko badal diya:
-    result = "Ham (Safe)" if int(prediction) == 1 else "Spam"
-    
+    # Model prediction array se element nikalna
+    raw_prediction = svm_model.predict(vectorized_data)
+    prediction_number = int(raw_prediction[0])
+
+    # Standard check: 1 = Spam, 0 = Ham
+    if prediction_number == 1:
+        result = "Spam"
+    else:
+        result = "Ham (Safe)"
+        
     return {
         "email_received": data.email_text,
         "prediction": result
