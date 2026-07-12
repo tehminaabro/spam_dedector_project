@@ -71,7 +71,7 @@ def home():
 
                 try {
                     // Ye dynamic origin khud hi Render ya Hugging face ka link utha lega
-                    const response = await fetch(window.location.origin + '/predict', {
+                    const response = await fetch(window.location.origin + 'https://spam-dedector-project.onrender.com/predict', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ email_text: text })
