@@ -102,7 +102,7 @@ def predict_email(data: EmailInput):
     prediction = svm_model.predict(vectorized_data)[0]
     
     # int() lagayein taake 100% sahi match ho
-    result = "Spam" if int(prediction) == 1 else "Ham (Safe)"
+    result = "Spam" if int(prediction) == 0 else "Ham (Safe)"
     
     return {
         "email_received": data.email_text,
