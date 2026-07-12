@@ -93,11 +93,17 @@ def home():
     </html>
     """
 
+
 @app.post("/predict")
 def predict_email(data: EmailInput):
     vectorized_data = tfidf_vectorizer.transform([data.email_text])
-    prediction = svm_model.predict(vectorized_data)
-    result = "Spam" if prediction == 1 else "Ham (Safe)"
+    
+    # GHALTI KI WALAJ HATAIN: [0] lagakar array se number nikalen
+    prediction = svm_model.predict(vectorized_data)[0]
+    
+    # int() lagayein taake 100% sahi match ho
+    result = "Spam" if int(prediction) == 1 else "Ham (Safe)"
+    
     return {
         "email_received": data.email_text,
         "prediction": result
