@@ -1,8 +1,8 @@
-
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from pydantic import BaseModel
 from fastapi.responses import HTMLResponse
+from fastapi.middleware.cors import CORSMiddleware  # <-- 1. CORS Middleware import kiya
 import joblib
 
 svm_model = None
@@ -11,12 +11,20 @@ tfidf_vectorizer = None
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     global svm_model, tfidf_vectorizer
-    # Render (Linux server) par direct root files load hongi
     svm_model = joblib.load("spam_model_svm.joblib") 
     tfidf_vectorizer = joblib.load("tfidf_vectorizer.joblib") 
     yield
 
 app = FastAPI(lifespan=lifespan)
+
+# <-- 2. CORS Settings add keen taake Hugging Face aapki API use kar sake
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Is se saari websites (including Hugging Face) allow ho jayengi
+    allow_credentials=True,
+    allow_methods=["*"],  # Saare methods (GET, POST) allow hain
+    allow_headers=["*"],
+)
 
 class EmailInput(BaseModel):
     email_text: str
@@ -44,7 +52,7 @@ def home():
     </head>
     <body>
         <div class="container">
-            <h2>AI Spam Detector</h2>
+            <h2>🕵️‍♂️ AI Spam Detector</h2>
             <p>Enter your email text below to analyze if it's safe or spam.</p>
             <textarea id="messageInput" placeholder="Paste your text or email content here..."></textarea>
             <button onclick="checkSpam()">Analyze Text</button>
@@ -61,7 +69,7 @@ def home():
                 resultDiv.style.color = "#555";
 
                 try {
-                    const response = await fetch('/predict', {
+                    const response = await fetch('https://onrender.com', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ email_text: text })
@@ -76,7 +84,7 @@ def home():
                         resultDiv.style.color = "#2e7d32";
                     }
                 } catch (error) {
-                    resultDiv.innerText = "❌ Error connecting to server.";
+                    resultDiv.innerText = "❌ Error connecting to Render server.";
                     resultDiv.style.color = "#d32f2f";
                 }
             }
@@ -94,4 +102,3 @@ def predict_email(data: EmailInput):
         "email_received": data.email_text,
         "prediction": result
     }
-
