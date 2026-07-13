@@ -40,25 +40,131 @@ def home():
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>AI Spam Detector</title>
         <style>
-            body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-            .container { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); text-align: center; width: 450px; box-sizing: border-box; }
-            h2 { color: #1a73e8; margin-top: 0; font-size: 26px; }
-            p { color: #666; font-size: 14px; margin-bottom: 20px; }
-            textarea { width: 100%; height: 120px; padding: 12px; border: 2px solid #dadce0; border-radius: 8px; resize: none; box-sizing: border-box; font-size: 15px; outline: none; transition: border-color 0.2s; }
-            textarea:focus { border-color: #1a73e8; }
-            button { background-color: #1a73e8; color: white; border: none; padding: 12px 20px; margin-top: 15px; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: bold; width: 100%; transition: background-color 0.2s; }
-            button:hover { background-color: #1557b0; }
-            #result { margin-top: 25px; font-weight: bold; font-size: 20px; min-height: 30px; }
+          body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background-color: #f0f2f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.container {
+    background: white;
+    padding: 40px;
+    border-radius: 14px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    text-align: center;
+    width: 520px;
+    box-sizing: border-box;
+}
+
+h2 {
+    color: #1a73e8;
+    margin-top: 0;
+    font-size: 28px;
+}
+
+p {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 18px;
+}
+
+.note {
+    background: #eef5ff;
+    border: 1px solid #c9dcff;
+    border-radius: 8px;
+    padding: 12px;
+    text-align: left;
+    font-size: 13px;
+    color: #444;
+    margin-bottom: 18px;
+    line-height: 1.5;
+}
+
+textarea {
+    width: 100%;
+    height: 120px;
+    padding: 12px;
+    border: 2px solid #dadce0;
+    border-radius: 8px;
+    resize: none;
+    box-sizing: border-box;
+    font-size: 15px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+textarea:focus {
+    border-color: #1a73e8;
+}
+
+button {
+    background-color: #1a73e8;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    margin-top: 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    width: 100%;
+    transition: background-color 0.2s;
+}
+
+button:hover {
+    background-color: #1557b0;
+}
+
+#result {
+    margin-top: 25px;
+    font-weight: bold;
+    font-size: 20px;
+    min-height: 30px;
+}
+
+.footer {
+    margin-top: 25px;
+    border-top: 1px solid #ddd;
+    padding-top: 15px;
+    font-size: 14px;
+    color: #555;
+}
         </style>
     </head>
     <body>
         <div class="container">
-            <h2>🕵️‍♂️ AI Spam Detector</h2>
-            <p>Enter your email text below to analyze if it's safe or spam.</p>
-            <textarea id="messageInput" placeholder="Paste your text or email content here..."></textarea>
-            <button onclick="checkSpam()">Analyze Text</button>
-            <div id="result"></div>
-        </div>
+
+    <h2>🛡️ AI Email Spam Detector</h2>
+
+    <p>Enter your email text below to analyze if it's safe or spam.</p>
+
+    <div class="note">
+        <b>ℹ️ Note</b><br><br>
+        This model is trained on the <b>Enron Email Spam Dataset</b>.<br>
+        It performs best on business, corporate and promotional emails.<br>
+        Very short personal messages may occasionally be classified differently.
+    </div>
+
+    <textarea
+        id="messageInput"
+        placeholder="Paste your business, corporate or promotional email here...">
+    </textarea>
+
+    <button onclick="checkSpam()">
+        🔍 Analyze Email
+    </button>
+
+    <div id="result"></div>
+
+    <div class="footer">
+        👩‍💻 <b>Developed by:</b> Tehmina Abro
+    </div>
+
+</div>
 
         <script>
             async function checkSpam() {
